@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
+    <title>SpinShot.io - Brawl Edition</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <!-- Custom Brawl Stars Theme -->
+    <link rel="stylesheet" href="static/css/brawl-style.css">
+</head>
+
+<body class="brawl-bg text-white">
+
+    <!-- Orientation Warning (Mobile) -->
+    <div id="orientation-warning" class="full-screen flex-col text-center p-8 hidden">
+        <div class="text-6xl mb-4">📱↔️</div>
+        <h1 class="text-3xl text-yellow-400">GIRA TU MÓVIL</h1>
+        <p>Este juego está diseñado para jugarse en horizontal.</p>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="full-screen z-50 bg-slate-900">
+        <h1 class="text-4xl text-yellow-400 animate-pulse">CARGANDO...</h1>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="full-screen hidden z-40">
+
+        <div class="brawl-panel w-full max-w-md pop-in">
+            <h1 class="text-4xl text-yellow-400 mb-6 drop-shadow-md italic" id="auth-title">INICIAR SESIÓN</h1>
+
+            <form id="auth-form" class="flex flex-col gap-4">
+                <input type="text" id="username-input" class="input-field" placeholder="Nombre de Usuario"
+                    maxlength="15" autocomplete="off">
+                <input type="password" id="password-input" class="input-field" placeholder="Contraseña (min 6 chars)">
+
+                <p id="auth-message" class="text-red-400 text-sm font-bold min-h-[20px]"></p>
+
+                <button type="submit" id="auth-submit" class="brawl-btn btn-green w-full">ENTRAR</button>
+            </form>
+
+            <button id="toggle-auth-mode"
+                class="mt-6 text-cyan-300 text-sm hover:underline hover:text-white transition-colors">
+                ¿No tienes cuenta? Regístrate
+            </button>
+        </div>
+    </div>
+
+    <!-- Lobby Screen -->
+    <div id="lobby-screen" class="full-screen hidden z-30">
+        <!-- Profile Header -->
+        <div
+            class="absolute top-4 left-4 flex items-center gap-4 bg-black/40 p-2 pr-6 rounded-full border-2 border-slate-600">
+            <div
+                class="w-12 h-12 bg-purple-600 rounded-full border-2 border-white flex items-center justify-center text-xl">
+                👤
+            </div>
+            <div class="flex flex-col items-start">
+                <span id="lobby-username" class="text-white font-bold text-lg leading-none">Player</span>
+                <div class="trophy-count text-sm">
+                    <span class="trophy-icon scale-75"></span>
+                    <span id="lobby-trophies">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings / Logout -->
+        <div class="absolute top-4 right-4">
+            <button id="logout-btn" class="brawl-btn btn-red text-sm py-2 px-4">SALIR</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col items-center gap-8 pop-in">
+            <div class="text-center mb-4">
+                <h1 class="text-6xl text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-blue-600 drop-shadow-[0_4px_0_#000] mb-2 italic tracking-tighter"
+                    style="-webkit-text-stroke: 2px black;">SPINSHOT</h1>
+                <p class="text-yellow-400 text-xl tracking-widest font-bold drop-shadow-md">BRAWL EDITION</p>
+            </div>
+
+            <button id="play-btn" class="brawl-btn btn-yellow text-4xl px-12 py-6 animate-bounce">
+                JUGAR
+            </button>
+        </div>
+
+        <!-- Bottom Character/Decor (Optional) -->
+        <div class="absolute bottom-0 w-full flex justify-between px-10 pointer-events-none opacity-50">
+            <!-- You could add character images here if you had them -->
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container" class="full-screen hidden bg-slate-900">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Game UI Overlay -->
+        <div id="ui-layer" class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between">
+            <!-- Top HUD -->
+            <div class="flex justify-between items-start w-full">
+                <div class="text-white">
+                    <div class="flex items-center gap-2">
+                        <!-- In-game score could go here -->
+                        <div class="brawl-panel p-2 py-1 flex items-center gap-2 border-2 border-gray-500">
+                            <span class="text-yellow-400 font-bold">SCORE:</span>
+                            <span id="score-display" class="text-white text-xl">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div
+                    class="bg-black/60 backdrop-blur border border-slate-700 p-2 rounded-lg text-white text-xs w-48 shadow-xl pointer-events-auto">
+                    <h3 class="font-bold text-yellow-400 mb-1 text-center">🏆 TOP BRAWLERS</h3>
+                    <ul id="leaderboard-list" class="space-y-1"></ul>
+                </div>
+            </div>
+
+            <!-- Mobile Controls / Info -->
+            <div class="self-center mb-8 pointer-events-none">
+                <div id="powerup-display"
+                    class="transition-all duration-300 transform scale-0 flex flex-col items-center">
+                    <div
+                        class="bg-gray-900/90 border-4 border-yellow-400 px-6 py-2 rounded-full text-white font-black text-xl shadow-[0_0_20px_rgba(255,215,0,0.6)] flex items-center gap-3 animate-pulse">
+                        <span id="powerup-icon" class="text-2xl">⚡</span>
+                        <span id="powerup-text">POWER UP!</span>
+                    </div>
+                </div>
+                <div id="invincible-status" class="hidden mt-2">
+                    <span
+                        class="bg-blue-600/80 text-white font-bold px-4 py-1 rounded-full border border-blue-400 shadow-[0_0_15px_#3b82f6]">🛡️
+                        INVENCIBLE</span>
+                </div>
+            </div>
+
+            <!-- Mass Bar -->
+            <div class="absolute bottom-4 left-4 right-4 flex justify-center">
+                <div
+                    class="w-full max-w-md bg-gray-800 h-6 rounded-full border-2 border-black overflow-hidden relative">
+                    <div id="mass-bar"
+                        class="h-full bg-gradient-to-r from-orange-500 to-yellow-400 w-0 transition-all duration-300">
+                    </div>
+                    <span
+                        class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">MASA</span>
+                </div>
+                <p class="absolute bottom-8 right-2 text-xs text-white opacity-50">FPS: <span id="fps-counter">60</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Game Over Modal (In-Game) -->
+        <div id="game-over-screen"
+            class="absolute inset-0 flex items-center justify-center z-50 hidden bg-black/80 backdrop-blur-sm">
+            <div class="brawl-panel max-w-sm w-full animate-[bounce_0.5s_ease-out]">
+                <h2 class="text-5xl text-red-500 drop-shadow-[0_2px_0_#fff] mb-4"
+                    style="-webkit-text-stroke: 2px black;">ELIMINADO</h2>
+
+                <div class="grid grid-cols-2 gap-4 mb-6 bg-black/40 p-4 rounded-lg">
+                    <div class="text-center">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Puntuación</p>
+                        <p id="final-score" class="text-3xl text-yellow-400 font-black">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Kills</p>
+                        <p id="final-kills" class="text-3xl text-red-500 font-black">0</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <button id="restart-btn" class="brawl-btn btn-blue text-lg py-3">JUGAR DE NUEVO</button>
+                    <!-- Return to lobby option -->
+                    <button onclick="location.reload()" class="brawl-btn btn-red text-sm py-2">SALIR AL LOBBY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="static/js/game.js"></script>
+    <script type="module" src="static/js/app.js"></script>
+
+</body>
+
+</html>
