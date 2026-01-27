@@ -82,6 +82,10 @@ window.addEventListener('load', () => {
 // UI Logic
 function showScreen(screenName) {
     Object.values(screens).forEach(s => s.classList.add('hidden'));
+
+    // Specific check for matchmaking overlay
+    document.getElementById('matchmaking-screen').classList.add('hidden');
+
     screens[screenName].classList.remove('hidden');
 
     // Audio Logic based on screen
@@ -100,10 +104,97 @@ document.addEventListener('click', (e) => {
     }
     // ensure bgm starts on first interaction if blocked
     if (AudioMgr.bgm.paused && !screens.game.classList.contains('hidden') === false) {
-        // only if not in game
-        if (!document.getElementById('lobby-screen').classList.contains('hidden') || !document.getElementById('auth-screen').classList.contains('hidden'))
-            AudioMgr.playBGM();
+        AudioMgr.playBGM();
     }
+});
+
+// --- Character Selector Logic ---
+let currentCharIndex = 0;
+const charKeys = ['PRIMO', 'COLT', 'MAX']; // Match keys in game.js CHARACTERS
+
+function updateCharCard() {
+    const key = charKeys[currentCharIndex];
+    // Need access to CHARACTERS from game.js - ideally we import or share config
+    // For now we duplicate or assume window.CHARACTERS is available after game.js loads
+    const stats = window.CHARACTERS ? window.CHARACTERS[key] : { name: 'Loading...', special: '...', icon: '?' };
+
+    const container = document.getElementById('char-card-container');
+    const nameEl = document.getElementById('char-name');
+    const descEl = document.getElementById('char-desc');
+    const iconEl = document.getElementById('char-icon');
+
+    // Visual update
+    container.classList.remove('pop-in');
+    void container.offsetWidth; // trigger reflow
+    container.classList.add('pop-in');
+
+    nameEl.innerText = stats.name;
+    descEl.innerText = `SPECIAL: ${stats.special}`;
+    iconEl.innerText = stats.icon;
+}
+
+document.getElementById('prev-char').addEventListener('click', () => {
+    currentCharIndex = (currentCharIndex - 1 + charKeys.length) % charKeys.length;
+    updateCharCard();
+});
+
+document.getElementById('next-char').addEventListener('click', () => {
+    currentCharIndex = (currentCharIndex + 1) % charKeys.length;
+    updateCharCard();
+});
+
+// --- Matchmaking Logic ---
+let mmTimeout = null;
+
+dom.playBtn.addEventListener('click', () => {
+    // Show Matchmaking Overlay
+    const mmScreen = document.getElementById('matchmaking-screen');
+    mmScreen.classList.remove('hidden');
+    mmScreen.style.display = 'flex'; // Ensure flex layout
+
+    // Simulate searching
+    mmTimeout = setTimeout(() => {
+        mmScreen.classList.add('hidden');
+        startGameFlow();
+    }, 3000 + Math.random() * 2000); // 3-5 seconds
+});
+
+document.getElementById('cancel-mm-btn').addEventListener('click', () => {
+    if (mmTimeout) clearTimeout(mmTimeout);
+    document.getElementById('matchmaking-screen').classList.add('hidden');
+});
+
+function startGameFlow() {
+    AudioMgr.stopBGM();
+    AudioMgr.playStart();
+
+    showScreen('game');
+    const username = dom.labelUsername.innerText;
+    const selectedChar = charKeys[currentCharIndex];
+
+    if (gameInstance) {
+        // Reset and start
+        gameInstance.startGame(username, selectedChar);
+    }
+}
+
+// --- In-Game Controls ---
+document.getElementById('btn-launch').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    if (gameInstance) gameInstance.handleLaunch();
+});
+document.getElementById('btn-launch').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameInstance) gameInstance.handleLaunch();
+});
+
+document.getElementById('btn-special').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    if (gameInstance) gameInstance.handleSpecial();
+});
+document.getElementById('btn-special').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameInstance) gameInstance.handleSpecial();
 });
 
 // Auth Toggle
@@ -186,6 +277,9 @@ onAuthStateChanged(auth, async (user) => {
             }
         });
 
+        // Initialize Character Card
+        setTimeout(updateCharCard, 500); // Small delay to ensure game.js loaded
+
         showScreen('lobby');
     } else {
         showScreen('auth');
@@ -198,20 +292,6 @@ onAuthStateChanged(auth, async (user) => {
 dom.logoutBtn.addEventListener('click', () => {
     signOut(auth);
     location.reload(); // Reload to reset game state just in case
-});
-
-// Play Game
-dom.playBtn.addEventListener('click', () => {
-    AudioMgr.playStart();
-
-    // Delay slightly for sound effect
-    setTimeout(() => {
-        showScreen('game');
-        const username = dom.labelUsername.innerText;
-        if (gameInstance) {
-            gameInstance.startGame(username);
-        }
-    }, 500);
 });
 
 // Orientation Check

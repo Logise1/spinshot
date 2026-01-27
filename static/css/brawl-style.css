@@ -52,9 +52,17 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
+    background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
     /* Vignette */
     pointer-events: none;
+}
+
+/* Title Fix: Ensure proper padding to avoid clipping */
+.gametitle {
+    padding: 10px 20px;
+    line-height: 1.2;
+    background-clip: padding-box;
+    /* Helps with some rendering issues */
 }
 
 /* Buttons */
@@ -82,13 +90,12 @@ body {
 
 .btn-yellow {
     background: linear-gradient(180deg, #ffe100 0%, #ffaa00 100%);
-    border: 2px solid #fff;
+    border: 3px solid #fff;
 }
 
 .btn-blue {
     background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
-    background: linear-gradient(to bottom, #33ccff, #0066ff);
-    border: 2px solid #fff;
+    border: 3px solid #fff;
 }
 
 .btn-green {
@@ -103,7 +110,7 @@ body {
 
 /* Panels */
 .brawl-panel {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     border: 4px solid #444;
     border-radius: 20px;
     padding: 2rem;
@@ -117,7 +124,7 @@ body {
     font-family: 'Segoe UI', sans-serif;
     /* Readable for input */
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
     border: 2px solid #555;
     background: #222;
@@ -132,23 +139,114 @@ body {
     outline: none;
 }
 
-/* Specific Screens */
-#orientation-warning {
-    z-index: 9999;
-    background: #000;
-    color: var(--brawl-yellow);
+/* Character Selector */
+.char-card {
+    background: rgba(30, 41, 59, 0.9);
+    border: 3px solid #475569;
+    border-radius: 15px;
+    width: 250px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-@media (orientation: landscape) {
-    #orientation-warning {
-        display: none !important;
+.char-card.selected {
+    border-color: var(--brawl-yellow);
+    box-shadow: 0 0 25px var(--brawl-yellow);
+    transform: scale(1.05);
+    background: rgba(30, 41, 59, 1);
+}
+
+.char-icon {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.5));
+}
+
+.char-name {
+    font-size: 2rem;
+    color: white;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.char-stat {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-top: 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px 10px;
+    border-radius: 10px;
+}
+
+/* Matchmaking Screen */
+#matchmaking-screen {
+    background: radial-gradient(circle, #0f172a 0%, #000000 100%);
+    z-index: 100;
+}
+
+.mm-loader {
+    width: 80px;
+    height: 80px;
+    border: 8px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--brawl-yellow);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 2rem;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
     }
 }
 
-@media (orientation: portrait) {
-    #orientation-warning {
-        display: flex !important;
-    }
+/* Game Controls */
+.game-btn-lg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid white;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    touch-action: manipulation;
+    pointer-events: auto;
+    user-select: none;
+    transition: transform 0.1s;
+}
+
+.game-btn-lg:active {
+    transform: scale(0.9);
+}
+
+.btn-launch {
+    background: linear-gradient(135deg, #3b82f6, #0045a5);
+}
+
+.btn-launch:active {
+    transform: scale(0.95);
+}
+
+.btn-special {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #eab308, #a16207);
+    font-size: 2rem;
+}
+
+.btn-special.cooldown {
+    filter: grayscale(1);
+    opacity: 0.5;
 }
 
 /* Animations */
@@ -168,20 +266,14 @@ body {
     }
 }
 
-/* Trophies */
-.trophy-count {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #ffd700;
-    font-size: 1.5rem;
-    text-shadow: 1px 1px 0 #000;
+@media (orientation: landscape) {
+    #orientation-warning {
+        display: none !important;
+    }
 }
 
-.trophy-icon {
-    width: 30px;
-    height: 30px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gold"><path d="M12 2l1 2h-2z"/></svg>');
-    /* Placeholder */
-    /* Use a better emoji or svg in html */
+@media (orientation: portrait) {
+    #orientation-warning {
+        display: flex !important;
+    }
 }

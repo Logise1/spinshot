@@ -54,6 +54,15 @@
         </div>
     </div>
 
+    <!-- Matchmaking Screen -->
+    <div id="matchmaking-screen" class="full-screen hidden flex-col z-50">
+        <div class="mm-loader"></div>
+        <h2 class="text-3xl text-white font-bold animate-pulse mb-2">BUSCANDO JUGADORES...</h2>
+        <p class="text-gray-400 font-mono text-sm">Emparejando (1/10)</p>
+        <button id="cancel-mm-btn"
+            class="mt-8 text-red-400 border border-red-400 px-4 py-2 rounded hover:bg-red-400 hover:text-white transition">CANCELAR</button>
+    </div>
+
     <!-- Lobby Screen -->
     <div id="lobby-screen" class="full-screen hidden z-30">
         <!-- Profile Header -->
@@ -78,21 +87,31 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex flex-col items-center gap-8 pop-in">
-            <div class="text-center mb-4">
-                <h1 class="text-6xl text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-blue-600 drop-shadow-[0_4px_0_#000] mb-2 italic tracking-tighter"
+        <div class="flex flex-col items-center gap-2 pop-in w-full max-w-4xl">
+            <div class="text-center mb-0">
+                <h1 class="gametitle text-6xl text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-blue-600 drop-shadow-[0_4px_0_#000] mb-2 italic tracking-tighter"
                     style="-webkit-text-stroke: 2px black;">SPINSHOT</h1>
                 <p class="text-yellow-400 text-xl tracking-widest font-bold drop-shadow-md">BRAWL EDITION</p>
+            </div>
+
+            <!-- Character Selector -->
+            <div class="flex items-center justify-center gap-8 mb-6 mt-4 w-full">
+                <button id="prev-char"
+                    class="text-4xl text-white hover:text-yellow-400 transition transform hover:scale-125">◀</button>
+
+                <div id="char-card-container" class="char-card selected">
+                    <div class="char-icon" id="char-icon">🥊</div>
+                    <h3 class="char-name" id="char-name">EL TANQUE</h3>
+                    <div class="char-stat" id="char-desc">SPECIAL: SHOCKWAVE</div>
+                </div>
+
+                <button id="next-char"
+                    class="text-4xl text-white hover:text-yellow-400 transition transform hover:scale-125">▶</button>
             </div>
 
             <button id="play-btn" class="brawl-btn btn-yellow text-4xl px-12 py-6 animate-bounce">
                 JUGAR
             </button>
-        </div>
-
-        <!-- Bottom Character/Decor (Optional) -->
-        <div class="absolute bottom-0 w-full flex justify-between px-10 pointer-events-none opacity-50">
-            <!-- You could add character images here if you had them -->
         </div>
     </div>
 
@@ -104,26 +123,24 @@
         <div id="ui-layer" class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between">
             <!-- Top HUD -->
             <div class="flex justify-between items-start w-full">
-                <div class="text-white">
-                    <div class="flex items-center gap-2">
-                        <!-- In-game score could go here -->
-                        <div class="brawl-panel p-2 py-1 flex items-center gap-2 border-2 border-gray-500">
-                            <span class="text-yellow-400 font-bold">SCORE:</span>
-                            <span id="score-display" class="text-white text-xl">0</span>
-                        </div>
+                <div class="text-white pointer-events-auto">
+                    <!-- Score -->
+                    <div class="brawl-panel p-2 py-1 flex items-center gap-2 border-2 border-gray-500">
+                        <span class="text-yellow-400 font-bold">SCORE:</span>
+                        <span id="score-display" class="text-white text-xl">0</span>
                     </div>
                 </div>
 
                 <!-- Leaderboard -->
                 <div
-                    class="bg-black/60 backdrop-blur border border-slate-700 p-2 rounded-lg text-white text-xs w-48 shadow-xl pointer-events-auto">
+                    class="bg-black/60 backdrop-blur border border-slate-700 p-2 rounded-lg text-white text-xs w-48 shadow-xl pointer-events-auto opacity-80 hover:opacity-100 transition">
                     <h3 class="font-bold text-yellow-400 mb-1 text-center">🏆 TOP BRAWLERS</h3>
                     <ul id="leaderboard-list" class="space-y-1"></ul>
                 </div>
             </div>
 
-            <!-- Mobile Controls / Info -->
-            <div class="self-center mb-8 pointer-events-none">
+            <!-- Center Notifications -->
+            <div class="self-center pointer-events-none absolute top-1/4 w-full text-center">
                 <div id="powerup-display"
                     class="transition-all duration-300 transform scale-0 flex flex-col items-center">
                     <div
@@ -132,53 +149,64 @@
                         <span id="powerup-text">POWER UP!</span>
                     </div>
                 </div>
-                <div id="invincible-status" class="hidden mt-2">
+                <div id="invincible-status" class="hidden mt-2 flex justify-center">
                     <span
                         class="bg-blue-600/80 text-white font-bold px-4 py-1 rounded-full border border-blue-400 shadow-[0_0_15px_#3b82f6]">🛡️
                         INVENCIBLE</span>
                 </div>
             </div>
 
-            <!-- Mass Bar -->
-            <div class="absolute bottom-4 left-4 right-4 flex justify-center">
-                <div
-                    class="w-full max-w-md bg-gray-800 h-6 rounded-full border-2 border-black overflow-hidden relative">
-                    <div id="mass-bar"
-                        class="h-full bg-gradient-to-r from-orange-500 to-yellow-400 w-0 transition-all duration-300">
+            <!-- Controls (Bottom) -->
+            <div class="w-full h-full absolute inset-0 pointer-events-none flex flex-col justify-end pb-4 px-4">
+
+                <!-- Mass Bar (Center Bottom) -->
+                <div class="self-center w-full max-w-md mb-24 opacity-80">
+                    <div class="bg-gray-900 h-4 rounded-full border border-gray-600 overflow-hidden relative">
+                        <div id="mass-bar"
+                            class="h-full bg-gradient-to-r from-orange-500 to-yellow-400 w-0 transition-all duration-300">
+                        </div>
                     </div>
-                    <span
-                        class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">MASA</span>
                 </div>
-                <p class="absolute bottom-8 right-2 text-xs text-white opacity-50">FPS: <span id="fps-counter">60</span>
-                </p>
+
+                <!-- Action Buttons (Right) -->
+                <div class="absolute bottom-8 right-8 flex items-end gap-6 pointer-events-auto">
+                    <button id="btn-special" class="game-btn-lg btn-special" title="E">⚡</button>
+                    <button id="btn-launch" class="game-btn-lg btn-launch" title="Space">🚀</button>
+                </div>
+
+                <!-- Joystick Area (Left) - Just visual indicator or touch area -->
+                <!-- <div class="absolute bottom-8 left-8 w-32 h-32 rounded-full border-2 border-white/20 bg-white/5 pointer-events-auto"></div> -->
+            </div>
+
+            <p class="absolute bottom-2 left-2 text-xs text-white opacity-30">FPS: <span id="fps-counter">60</span></p>
+        </div>
+    </div>
+
+    <!-- Game Over Modal (In-Game) -->
+    <div id="game-over-screen"
+        class="absolute inset-0 flex items-center justify-center z-50 hidden bg-black/80 backdrop-blur-sm">
+        <div class="brawl-panel max-w-sm w-full animate-[bounce_0.5s_ease-out]">
+            <h2 class="text-5xl text-red-500 drop-shadow-[0_2px_0_#fff] mb-4" style="-webkit-text-stroke: 2px black;">
+                ELIMINADO</h2>
+
+            <div class="grid grid-cols-2 gap-4 mb-6 bg-black/40 p-4 rounded-lg">
+                <div class="text-center">
+                    <p class="text-gray-400 text-xs font-bold uppercase">Puntuación</p>
+                    <p id="final-score" class="text-3xl text-yellow-400 font-black">0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-400 text-xs font-bold uppercase">Kills</p>
+                    <p id="final-kills" class="text-3xl text-red-500 font-black">0</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button id="restart-btn" class="brawl-btn btn-blue text-lg py-3">JUGAR DE NUEVO</button>
+                <!-- Return to lobby option -->
+                <button onclick="location.reload()" class="brawl-btn btn-red text-sm py-2">SALIR AL LOBBY</button>
             </div>
         </div>
-
-        <!-- Game Over Modal (In-Game) -->
-        <div id="game-over-screen"
-            class="absolute inset-0 flex items-center justify-center z-50 hidden bg-black/80 backdrop-blur-sm">
-            <div class="brawl-panel max-w-sm w-full animate-[bounce_0.5s_ease-out]">
-                <h2 class="text-5xl text-red-500 drop-shadow-[0_2px_0_#fff] mb-4"
-                    style="-webkit-text-stroke: 2px black;">ELIMINADO</h2>
-
-                <div class="grid grid-cols-2 gap-4 mb-6 bg-black/40 p-4 rounded-lg">
-                    <div class="text-center">
-                        <p class="text-gray-400 text-xs font-bold uppercase">Puntuación</p>
-                        <p id="final-score" class="text-3xl text-yellow-400 font-black">0</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-gray-400 text-xs font-bold uppercase">Kills</p>
-                        <p id="final-kills" class="text-3xl text-red-500 font-black">0</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <button id="restart-btn" class="brawl-btn btn-blue text-lg py-3">JUGAR DE NUEVO</button>
-                    <!-- Return to lobby option -->
-                    <button onclick="location.reload()" class="brawl-btn btn-red text-sm py-2">SALIR AL LOBBY</button>
-                </div>
-            </div>
-        </div>
+    </div>
     </div>
 
     <!-- Scripts -->
