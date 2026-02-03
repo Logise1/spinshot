@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,18 +11,14 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #0f172a;
-            /* Slate 900 */
+            background-color: #0f172a; /* Slate 900 */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
-            touch-action: none;
-            /* Previene scroll en móvil */
+            touch-action: none; /* Previene scroll en móvil */
         }
-
         canvas {
             display: block;
         }
-
         #ui-layer {
             position: absolute;
             top: 0;
@@ -32,70 +27,33 @@
             height: 100%;
             pointer-events: none;
         }
-
         .hud-text {
             text-shadow: 2px 2px 0 #000;
         }
-
         .screen-overlay {
             pointer-events: auto;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
         }
-
         /* Animación para daño */
         @keyframes shake {
-            0% {
-                transform: translate(1px, 1px) rotate(0deg);
-            }
-
-            10% {
-                transform: translate(-1px, -2px) rotate(-1deg);
-            }
-
-            20% {
-                transform: translate(-3px, 0px) rotate(1deg);
-            }
-
-            30% {
-                transform: translate(3px, 2px) rotate(0deg);
-            }
-
-            40% {
-                transform: translate(1px, -1px) rotate(1deg);
-            }
-
-            50% {
-                transform: translate(-1px, 2px) rotate(-1deg);
-            }
-
-            60% {
-                transform: translate(-3px, 1px) rotate(0deg);
-            }
-
-            70% {
-                transform: translate(3px, 1px) rotate(-1deg);
-            }
-
-            80% {
-                transform: translate(-1px, -1px) rotate(1deg);
-            }
-
-            90% {
-                transform: translate(1px, 2px) rotate(0deg);
-            }
-
-            100% {
-                transform: translate(1px, -2px) rotate(-1deg);
-            }
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
-
         .shake {
             animation: shake 0.5s;
         }
     </style>
 </head>
-
 <body>
 
     <canvas id="gameCanvas"></canvas>
@@ -107,20 +65,16 @@
                 <h1 class="text-3xl font-black italic hud-text text-cyan-400 tracking-tighter">SPINSHOT.IO</h1>
                 <p class="text-xs opacity-70 font-mono">FPS: <span id="fps-counter">60</span></p>
                 <div class="mt-4 space-y-1">
-                    <p class="text-white font-bold hud-text text-xl">SCORE: <span id="score-display"
-                            class="text-yellow-400">0</span></p>
+                    <p class="text-white font-bold hud-text text-xl">SCORE: <span id="score-display" class="text-yellow-400">0</span></p>
                     <div class="w-48 h-4 bg-gray-800 rounded-full overflow-hidden border border-gray-600">
-                        <div id="mass-bar"
-                            class="h-full bg-gradient-to-r from-green-500 to-emerald-400 w-1/4 transition-all duration-300">
-                        </div>
+                        <div id="mass-bar" class="h-full bg-gradient-to-r from-green-500 to-emerald-400 w-1/4 transition-all duration-300"></div>
                     </div>
                     <p class="text-xs text-gray-400 font-bold">MASA</p>
                 </div>
             </div>
-
+            
             <!-- Leaderboard -->
-            <div
-                class="bg-slate-900/80 backdrop-blur border border-slate-700 p-4 rounded-lg text-white text-sm w-56 shadow-xl">
+            <div class="bg-slate-900/80 backdrop-blur border border-slate-700 p-4 rounded-lg text-white text-sm w-56 shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-600 mb-2 pb-2">
                     <h3 class="font-bold text-gray-200">🏆 TOP PLAYERS</h3>
                 </div>
@@ -130,66 +84,52 @@
 
         <!-- Power Up Indicator -->
         <div id="powerup-display" class="self-center mb-10 hidden transition-all duration-300 transform scale-0">
-            <div class="bg-gray-900/90 border-2 border-white px-8 py-3 rounded-full text-white font-black text-xl shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center gap-3"
-                id="powerup-content">
+            <div class="bg-gray-900/90 border-2 border-white px-8 py-3 rounded-full text-white font-black text-xl shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center gap-3" id="powerup-content">
                 <span id="powerup-icon" class="text-2xl">⚡</span>
                 <span id="powerup-text">POWER UP!</span>
             </div>
         </div>
-
+        
         <!-- Invincibility Status -->
         <div id="invincible-status" class="self-center hidden mb-4">
-            <span
-                class="bg-blue-600/80 text-white font-bold px-4 py-1 rounded-full animate-pulse border border-blue-400 shadow-[0_0_15px_#3b82f6]">🛡️
-                INVENCIBLE</span>
+            <span class="bg-blue-600/80 text-white font-bold px-4 py-1 rounded-full animate-pulse border border-blue-400 shadow-[0_0_15px_#3b82f6]">🛡️ INVENCIBLE</span>
         </div>
     </div>
 
     <!-- Pantalla de Inicio -->
-    <div id="start-screen"
-        class="absolute inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-300 screen-overlay">
+    <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-300 screen-overlay">
         <div class="text-center max-w-lg w-full p-8 relative">
             <!-- Decorative Background Elements -->
-            <div
-                class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-cyan-500/10 to-purple-500/10 blur-3xl -z-10 rounded-full">
-            </div>
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-cyan-500/10 to-purple-500/10 blur-3xl -z-10 rounded-full"></div>
 
-            <h1
-                class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 mb-2 italic tracking-tighter drop-shadow-lg">
-                SPINSHOT</h1>
+            <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 mb-2 italic tracking-tighter drop-shadow-lg">SPINSHOT</h1>
             <p class="text-cyan-100/80 mb-10 text-xl font-light tracking-widest">DOMINA EL GIRO</p>
 
-            <div
-                class="bg-slate-800/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-slate-600/50 ring-1 ring-white/10">
+            <div class="bg-slate-800/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-slate-600/50 ring-1 ring-white/10">
                 <div class="relative group">
-                    <input type="text" id="player-name" placeholder="NICKNAME" maxlength="10"
+                    <input type="text" id="player-name" placeholder="NICKNAME" maxlength="10" 
                         class="w-full bg-slate-900/50 text-white border-2 border-slate-600 rounded-xl p-4 text-center text-2xl mb-6 focus:outline-none focus:border-cyan-500 focus:bg-slate-900 transition-all font-bold tracking-wider placeholder-slate-600">
                 </div>
-
-                <button id="start-btn"
-                    class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black py-5 rounded-xl text-2xl shadow-lg transform transition hover:scale-[1.02] active:scale-[0.98] border-t border-white/20">
+                
+                <button id="start-btn" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black py-5 rounded-xl text-2xl shadow-lg transform transition hover:scale-[1.02] active:scale-[0.98] border-t border-white/20">
                     JUGAR AHORA
                 </button>
             </div>
 
             <div class="mt-8 text-center text-gray-400 text-sm">
-                <span class="bg-slate-800 px-3 py-1 rounded border border-slate-700">🛡️ 5 Segundos de Invencibilidad al
-                    inicio</span>
+                <span class="bg-slate-800 px-3 py-1 rounded border border-slate-700">🛡️ 5 Segundos de Invencibilidad al inicio</span>
             </div>
         </div>
     </div>
 
     <!-- Game Over Screen -->
-    <div id="game-over-screen"
-        class="absolute inset-0 flex flex-col items-center justify-center z-50 hidden screen-overlay">
+    <div id="game-over-screen" class="absolute inset-0 flex flex-col items-center justify-center z-50 hidden screen-overlay">
         <div class="text-center max-w-md w-full p-6 animate-[bounce_0.5s_ease-out]">
-            <h2
-                class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-red-500 to-orange-600 mb-6 drop-shadow-lg italic">
-                ELIMINADO</h2>
-
+            <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-red-500 to-orange-600 mb-6 drop-shadow-lg italic">ELIMINADO</h2>
+            
             <div class="bg-slate-800/90 p-8 rounded-xl border border-slate-600 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500"></div>
-
+                
                 <div class="grid grid-cols-2 gap-6 mb-8">
                     <div class="text-center">
                         <p class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-1">Puntuación</p>
@@ -200,868 +140,19 @@
                         <p id="final-kills" class="text-4xl text-red-400 font-black">0</p>
                     </div>
                 </div>
-
-                <button id="restart-btn"
-                    class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 rounded-lg text-xl shadow-lg transform transition hover:scale-105 active:scale-95 border-t border-white/20">
+                
+                <button id="restart-btn" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 rounded-lg text-xl shadow-lg transform transition hover:scale-105 active:scale-95 border-t border-white/20">
                     JUGAR DE NUEVO
                 </button>
             </div>
         </div>
     </div>
+    </div>
 
-    <script>
-        /**
-         * SpinShot.io
-         * Full Code Implementation with DeltaTime & Invincibility
-         */
+    <!-- Scripts -->
+    <script src="static/js/game.js"></script>
+    <script type="module" src="static/js/app.js"></script>
 
-        // --- Audio Manager (Tone.js) ---
-        const SFX = {
-            synth: null,
-            poly: null,
-            noise: null,
-            lastBounceTime: 0,
-
-            init: async () => {
-                try {
-                    await Tone.start();
-                    SFX.synth = new Tone.MembraneSynth({
-                        pitchDecay: 0.05,
-                        octaves: 4,
-                        oscillator: { type: "sine" },
-                        envelope: { attack: 0.001, decay: 0.2, sustain: 0.01, release: 0.4, attackCurve: "exponential" }
-                    }).toDestination();
-                    SFX.synth.volume.value = -10;
-
-                    SFX.poly = new Tone.PolySynth(Tone.Synth, {
-                        oscillator: { type: "triangle" },
-                        envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 }
-                    }).toDestination();
-                    SFX.poly.volume.value = -15;
-
-                    SFX.noise = new Tone.NoiseSynth({
-                        noise: { type: 'white' },
-                        envelope: { attack: 0.005, decay: 0.3, sustain: 0 }
-                    }).toDestination();
-                    SFX.noise.volume.value = -12;
-                } catch (e) {
-                    console.warn("Audio Context init failed:", e);
-                }
-            },
-
-            safeTrigger: (synth, note, duration, time) => {
-                if (synth && Tone.context.state === 'running') {
-                    try {
-                        synth.triggerAttackRelease(note, duration, time);
-                    } catch (e) { }
-                }
-            },
-
-            playLaunch: () => SFX.safeTrigger(SFX.synth, "C2", "8n", Tone.now()),
-            playOrb: () => {
-                const notes = ["C6", "D6", "E6", "G6", "A6"];
-                const note = notes[Math.floor(Math.random() * notes.length)];
-                SFX.safeTrigger(SFX.poly, note, "32n", Tone.now());
-            },
-            playKill: () => {
-                SFX.safeTrigger(SFX.noise, null, "8n", Tone.now());
-                SFX.safeTrigger(SFX.synth, "G1", "4n", Tone.now());
-            },
-            playBounce: () => {
-                const now = Tone.now();
-                if (now > SFX.lastBounceTime + 0.1) {
-                    SFX.lastBounceTime = now;
-                    SFX.safeTrigger(SFX.synth, "A1", "16n", now);
-                }
-            },
-            playPowerup: () => SFX.safeTrigger(SFX.poly, ["C5", "E5", "G5", "C6"], "16n", Tone.now())
-        };
-
-        // --- Configuración ---
-        const CONFIG = {
-            MAP_WIDTH: 3000,
-            MAP_HEIGHT: 3000,
-            BASE_RADIUS: 25,
-            MAX_RADIUS: 120,
-            // Velocidades ajustadas para 60 FPS target
-            BASE_SPIN_SPEED: 0.09,
-            FRICTION: 0.965,
-            LAUNCH_FORCE_BASE: 18,
-            KILL_VELOCITY_THRESHOLD: 9,
-            ORB_COUNT: 250,
-            BOT_COUNT: 12,
-            POWERUP_SPAWN_RATE: 0.003, // Por frame normalizado
-            INVINCIBLE_TIME: 5000, // milisegundos
-            POWERUP_DURATION: 10000 // milisegundos
-        };
-
-        // --- Clases ---
-
-        class Trail {
-            constructor(x, y, radius, color) {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.color = color;
-                this.life = 1.0;
-                // Ajustado para decaer en tiempo real (~1s de vida)
-                this.decay = 0.05;
-            }
-            update(timeScale) {
-                this.life -= this.decay * timeScale;
-            }
-            draw(ctx) {
-                if (this.life <= 0) return;
-                ctx.globalAlpha = Math.max(0, this.life * 0.4);
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
-        }
-
-        class Entity {
-            constructor(x, y, radius, color) {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.color = color;
-                this.alive = true;
-            }
-        }
-
-        class Orb extends Entity {
-            constructor() {
-                super(
-                    Math.random() * CONFIG.MAP_WIDTH,
-                    Math.random() * CONFIG.MAP_HEIGHT,
-                    6 + Math.random() * 6,
-                    `hsl(${Math.random() * 360}, 80%, 60%)`
-                );
-                this.floatOffset = Math.random() * 100;
-            }
-
-            draw(ctx, time) {
-                // time viene en ms
-                const pulse = Math.sin(time * 0.005 + this.floatOffset) * 2;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius + pulse, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, (this.radius + pulse) * 0.3, 0, Math.PI * 2);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-            }
-        }
-
-        class PowerUp extends Entity {
-            constructor() {
-                super(
-                    Math.random() * (CONFIG.MAP_WIDTH - 200) + 100,
-                    Math.random() * (CONFIG.MAP_HEIGHT - 200) + 100,
-                    30,
-                    '#FFF'
-                );
-                this.type = Math.floor(Math.random() * 3);
-                this.icon = ['🎯', '🛡️', '🔒'][this.type];
-                this.color = ['#3b82f6', '#22c55e', '#a855f7'][this.type];
-                this.name = ['SLOW SPIN', 'WALL BOUNCE', 'VECTOR LOCK'][this.type];
-                this.rotation = 0;
-            }
-
-            draw(ctx, time) {
-                const bounce = Math.sin(time * 0.005) * 8;
-                // Rotación visual basada en tiempo
-                this.rotation = time * 0.002;
-
-                ctx.save();
-                ctx.translate(this.x, this.y + bounce);
-
-                ctx.beginPath();
-                ctx.arc(0, 0, this.radius + 5, 0, Math.PI * 2);
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = 2;
-                ctx.setLineDash([10, 5]);
-                ctx.stroke();
-
-                ctx.rotate(this.rotation);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = 0.2;
-                ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
-                ctx.globalAlpha = 1;
-
-                ctx.beginPath();
-                ctx.rect(-18, -18, 36, 36);
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = 3;
-                ctx.setLineDash([]);
-                ctx.stroke();
-
-                ctx.rotate(-this.rotation);
-                ctx.font = "24px Arial";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(this.icon, 0, 0);
-
-                ctx.restore();
-            }
-        }
-
-        class Particle {
-            constructor(x, y, color, speed) {
-                this.x = x;
-                this.y = y;
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * speed + 2;
-                this.vx = Math.cos(angle) * velocity;
-                this.vy = Math.sin(angle) * velocity;
-                this.life = 1.0;
-                this.decay = 0.015 + Math.random() * 0.02;
-                this.color = color;
-                this.size = Math.random() * 6 + 3;
-            }
-
-            update(timeScale) {
-                this.x += this.vx * timeScale;
-                this.y += this.vy * timeScale;
-
-                // Fricción ajustada a timeScale
-                this.vx *= Math.pow(0.92, timeScale);
-                this.vy *= Math.pow(0.92, timeScale);
-
-                this.life -= this.decay * timeScale;
-                this.size *= Math.pow(0.95, timeScale);
-            }
-
-            draw(ctx) {
-                if (this.life <= 0) return;
-                ctx.globalAlpha = this.life;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
-        }
-
-        class Player extends Entity {
-            constructor(name, isBot = false, gameInstance) {
-                super(
-                    Math.random() * CONFIG.MAP_WIDTH,
-                    Math.random() * CONFIG.MAP_HEIGHT,
-                    CONFIG.BASE_RADIUS,
-                    isBot ? `hsl(${Math.random() * 360}, 75%, 55%)` : '#06b6d4'
-                );
-                this.name = name;
-                this.isBot = isBot;
-                this.game = gameInstance;
-
-                this.angle = Math.random() * Math.PI * 2;
-                this.vx = 0;
-                this.vy = 0;
-                this.state = 'SPINNING';
-                this.score = 0;
-                this.kills = 0;
-
-                this.activePowerup = null;
-                this.powerupEndTime = 0;
-                this.canBounce = false;
-
-                this.trails = [];
-                this.flash = 0;
-
-                // Invincibility based on timestamp
-                this.spawnTime = Date.now();
-
-                // Bot timers
-                this.botActionTimer = 0;
-            }
-
-            isInvincible() {
-                return Date.now() - this.spawnTime < CONFIG.INVINCIBLE_TIME;
-            }
-
-            update(timeScale) {
-                const speed = Math.hypot(this.vx, this.vy);
-                const now = Date.now();
-
-                // Check Powerup Expiration
-                if (this.activePowerup && now > this.powerupEndTime) {
-                    this.deactivatePowerup();
-                }
-
-                if (this.state === 'SPINNING') {
-                    let spinSpeed = CONFIG.BASE_SPIN_SPEED;
-                    spinSpeed *= (1 - (this.radius / 500));
-
-                    if (this.activePowerup === 'SLOW SPIN') spinSpeed *= 0.3;
-                    if (this.activePowerup === 'VECTOR LOCK') spinSpeed = 0;
-
-                    // Aplicar rotación con timeScale
-                    this.angle += spinSpeed * timeScale;
-                    this.angle = this.angle % (Math.PI * 2);
-
-                    // Fricción fuerte al girar
-                    const spinFriction = Math.pow(0.85, timeScale);
-                    this.vx *= spinFriction;
-                    this.vy *= spinFriction;
-                }
-                else if (this.state === 'MOVING') {
-                    this.x += this.vx * timeScale;
-                    this.y += this.vy * timeScale;
-
-                    // Fricción normal
-                    const moveFriction = Math.pow(CONFIG.FRICTION, timeScale);
-                    this.vx *= moveFriction;
-                    this.vy *= moveFriction;
-
-                    if (speed > 5) {
-                        // Probabilidad normalizada por timeScale para trails consistentes
-                        if (Math.random() < 0.4 * timeScale) {
-                            this.trails.push(new Trail(this.x, this.y, this.radius, this.color));
-                        }
-                    }
-                    if (speed < 0.8) {
-                        this.state = 'SPINNING';
-                        this.canBounce = false;
-                    }
-                }
-
-                // Actualizar Trails
-                for (let i = this.trails.length - 1; i >= 0; i--) {
-                    this.trails[i].update(timeScale);
-                    if (this.trails[i].life <= 0) this.trails.splice(i, 1);
-                }
-
-                if (this.flash > 0) this.flash -= 1 * timeScale;
-
-                this.handleMapCollisions();
-
-                if (this.isBot) this.updateBotAI(timeScale);
-            }
-
-            handleMapCollisions() {
-                let hitWall = false;
-                const r = this.radius;
-
-                if (this.x - r < 0) { this.x = r; this.vx = Math.abs(this.vx); hitWall = true; }
-                if (this.x + r > CONFIG.MAP_WIDTH) { this.x = CONFIG.MAP_WIDTH - r; this.vx = -Math.abs(this.vx); hitWall = true; }
-                if (this.y - r < 0) { this.y = r; this.vy = Math.abs(this.vy); hitWall = true; }
-                if (this.y + r > CONFIG.MAP_HEIGHT) { this.y = CONFIG.MAP_HEIGHT - r; this.vy = -Math.abs(this.vy); hitWall = true; }
-
-                if (hitWall) {
-                    if (this.canBounce) {
-                        this.canBounce = false;
-                        SFX.playBounce();
-                        this.game.createExplosion(this.x, this.y, '#fff', 5);
-                    } else {
-                        this.vx = 0;
-                        this.vy = 0;
-                        this.state = 'SPINNING';
-                        SFX.playBounce();
-                    }
-                }
-            }
-
-            launch() {
-                if (this.state === 'SPINNING') {
-                    const force = CONFIG.LAUNCH_FORCE_BASE + (this.radius * 0.08);
-                    this.vx = Math.cos(this.angle) * force;
-                    this.vy = Math.sin(this.angle) * force;
-                    this.state = 'MOVING';
-                    if (!this.isBot) SFX.playLaunch();
-                    this.flash = 5;
-                }
-            }
-
-            updateBotAI(timeScale) {
-                if (this.state !== 'SPINNING') return;
-
-                // Cooldown artificial para que el bot no calcule cada frame si hay lag
-                this.botActionTimer += timeScale;
-                if (this.botActionTimer < 5) return; // Chequear cada ~5 frames normalizados
-                this.botActionTimer = 0;
-
-                let nearestTarget = null;
-                let minDist = 600;
-
-                const potentialTargets = this.game.players.filter(p => p !== this && p.alive);
-
-                for (const target of potentialTargets) {
-                    const d = Math.hypot(target.x - this.x, target.y - this.y);
-                    if (d < minDist) {
-                        minDist = d;
-                        nearestTarget = target;
-                    }
-                }
-
-                if (nearestTarget) {
-                    let angleToTarget = Math.atan2(nearestTarget.y - this.y, nearestTarget.x - this.x);
-                    if (angleToTarget < 0) angleToTarget += Math.PI * 2;
-
-                    let myAngle = this.angle % (Math.PI * 2);
-                    if (myAngle < 0) myAngle += Math.PI * 2;
-
-                    const diff = Math.abs(angleToTarget - myAngle);
-                    const tolerance = 0.15;
-
-                    if (diff < tolerance) this.launch();
-                } else {
-                    // Probabilidad ajustada por timeScale (para ser consistente en Hz altos/bajos)
-                    if (Math.random() < 0.01 * 5) this.launch(); // *5 porque chequeamos cada 5 frames
-                }
-            }
-
-            applyPowerup(type) {
-                this.activePowerup = type;
-                this.powerupEndTime = Date.now() + CONFIG.POWERUP_DURATION;
-                if (type === 'WALL BOUNCE') this.canBounce = true;
-
-                if (!this.isBot) {
-                    SFX.playPowerup();
-                    const ui = document.getElementById('powerup-display');
-                    const txt = document.getElementById('powerup-text');
-                    const icon = document.getElementById('powerup-icon');
-                    ui.classList.remove('hidden', 'scale-0');
-                    ui.classList.add('scale-100');
-                    txt.innerText = type;
-                    if (type === 'SLOW SPIN') icon.innerText = '🎯';
-                    if (type === 'WALL BOUNCE') icon.innerText = '🛡️';
-                    if (type === 'VECTOR LOCK') icon.innerText = '🔒';
-                }
-            }
-
-            deactivatePowerup() {
-                this.activePowerup = null;
-                this.canBounce = false;
-                if (!this.isBot) {
-                    document.getElementById('powerup-display').classList.add('scale-0');
-                    setTimeout(() => document.getElementById('powerup-display').classList.add('hidden'), 300);
-                }
-            }
-
-            grow(amount) {
-                this.score += Math.floor(amount);
-                if (this.radius < CONFIG.MAX_RADIUS) {
-                    this.radius += amount * 0.15;
-                }
-                if (!this.isBot) {
-                    const bar = document.getElementById('mass-bar');
-                    const pct = (this.radius / CONFIG.MAX_RADIUS) * 100;
-                    bar.style.width = pct + '%';
-                }
-            }
-
-            draw(ctx) {
-                this.trails.forEach(t => t.draw(ctx));
-
-                ctx.save();
-                ctx.translate(this.x, this.y);
-
-                // Visual de Invencibilidad
-                if (this.isInvincible()) {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, this.radius + 15, 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(59, 130, 246, ${0.4 + Math.sin(Date.now() * 0.01) * 0.3})`; // Azul pulsante
-                    ctx.lineWidth = 4;
-                    ctx.stroke();
-                    if (!this.isBot) {
-                        const ui = document.getElementById('invincible-status');
-                        if (ui.classList.contains('hidden')) ui.classList.remove('hidden');
-                    }
-                } else if (!this.isBot) {
-                    const ui = document.getElementById('invincible-status');
-                    if (!ui.classList.contains('hidden')) ui.classList.add('hidden');
-                }
-
-                if (this.flash > 0) {
-                    ctx.fillStyle = 'white';
-                } else {
-                    ctx.globalAlpha = this.isInvincible() ? 0.7 : 1.0;
-                    ctx.fillStyle = this.color;
-                }
-
-                ctx.beginPath();
-                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-
-                const speed = Math.hypot(this.vx, this.vy);
-                if (speed > CONFIG.KILL_VELOCITY_THRESHOLD) {
-                    ctx.shadowBlur = 25;
-                    ctx.shadowColor = '#f43f5e';
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 4;
-                    ctx.stroke();
-                } else {
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = this.color;
-                }
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1.0;
-
-                ctx.rotate(this.angle);
-
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.beginPath();
-                ctx.moveTo(this.radius + 12, 0);
-                ctx.lineTo(this.radius - 2, 8);
-                ctx.lineTo(this.radius + 2, 0);
-                ctx.lineTo(this.radius - 2, -8);
-                ctx.fill();
-
-                if (this.activePowerup === 'VECTOR LOCK') {
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                    ctx.setLineDash([10, 10]);
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(this.radius + 15, 0);
-                    ctx.lineTo(500, 0);
-                    ctx.stroke();
-                }
-
-                ctx.restore();
-
-                if (this.alive) {
-                    ctx.fillStyle = 'white';
-                    ctx.font = `bold ${Math.max(10, this.radius * 0.4)}px 'Segoe UI'`;
-                    ctx.textAlign = 'center';
-                    ctx.shadowColor = 'black';
-                    ctx.shadowBlur = 4;
-                    ctx.fillText(this.name, this.x, this.y - this.radius - 12);
-                    ctx.shadowBlur = 0;
-                }
-            }
-        }
-
-        // --- Motor Principal ---
-
-        class Game {
-            constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.resize();
-
-                this.particles = [];
-                this.orbs = [];
-                this.powerups = [];
-                this.players = [];
-
-                this.camera = { x: 0, y: 0 };
-                this.shake = 0;
-
-                this.running = false;
-                this.player = null;
-
-                // Time control
-                this.lastTime = 0;
-                this.accumulator = 0;
-
-                window.addEventListener('resize', () => this.resize());
-                window.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space') this.handleInput();
-                });
-
-                this.canvas.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    this.handleInput();
-                });
-                this.canvas.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.handleInput();
-                }, { passive: false });
-
-                document.getElementById('start-btn').addEventListener('click', () => this.startGame());
-                document.getElementById('restart-btn').addEventListener('click', () => location.reload());
-            }
-
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
-
-            handleInput() {
-                if (this.running && this.player && this.player.alive) {
-                    this.player.launch();
-                }
-            }
-
-            init() {
-                this.particles = [];
-                this.orbs = [];
-                this.powerups = [];
-                this.players = [];
-
-                for (let i = 0; i < CONFIG.ORB_COUNT; i++) this.orbs.push(new Orb());
-                for (let i = 0; i < CONFIG.BOT_COUNT; i++) {
-                    this.players.push(new Player(`BOT ${i + 1}`, true, this));
-                }
-            }
-
-            async startGame() {
-                await SFX.init();
-
-                const nameInput = document.getElementById('player-name').value || "JUGADOR";
-                const screen = document.getElementById('start-screen');
-                screen.style.opacity = '0';
-                setTimeout(() => screen.style.display = 'none', 300);
-
-                this.init();
-
-                this.player = new Player(nameInput.toUpperCase(), false, this);
-                this.players.push(this.player);
-
-                this.running = true;
-                this.lastTime = performance.now();
-                this.loop();
-            }
-
-            spawnPowerup(timeScale) {
-                // Probabilidad ajustada por timeScale para independencia de FPS
-                if (Math.random() < CONFIG.POWERUP_SPAWN_RATE * timeScale && this.powerups.length < 8) {
-                    this.powerups.push(new PowerUp());
-                }
-            }
-
-            checkCollisions() {
-                const allEntities = this.players.filter(p => p.alive);
-
-                // Orbes
-                allEntities.forEach(p => {
-                    for (let i = this.orbs.length - 1; i >= 0; i--) {
-                        const orb = this.orbs[i];
-                        if (Math.abs(p.x - orb.x) > p.radius + orb.radius + 10) continue;
-                        const dist = Math.hypot(p.x - orb.x, p.y - orb.y);
-                        if (dist < p.radius + orb.radius) {
-                            p.grow(4);
-                            if (!p.isBot) SFX.playOrb();
-                            this.orbs.splice(i, 1);
-                            this.orbs.push(new Orb());
-                        }
-                    }
-                });
-
-                // PowerUps
-                allEntities.forEach(p => {
-                    for (let i = this.powerups.length - 1; i >= 0; i--) {
-                        const pup = this.powerups[i];
-                        const dist = Math.hypot(p.x - pup.x, p.y - pup.y);
-                        if (dist < p.radius + 30) {
-                            p.applyPowerup(pup.name);
-                            this.powerups.splice(i, 1);
-                        }
-                    }
-                });
-
-                // PvP Collision
-                for (let i = 0; i < allEntities.length; i++) {
-                    for (let j = i + 1; j < allEntities.length; j++) {
-                        const p1 = allEntities[i];
-                        const p2 = allEntities[j];
-
-                        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-
-                        if (dist < p1.radius + p2.radius) {
-                            const s1 = Math.hypot(p1.vx, p1.vy);
-                            const s2 = Math.hypot(p2.vx, p2.vy);
-
-                            const p1Lethal = s1 > CONFIG.KILL_VELOCITY_THRESHOLD;
-                            const p2Lethal = s2 > CONFIG.KILL_VELOCITY_THRESHOLD;
-
-                            const p1Invincible = p1.isInvincible();
-                            const p2Invincible = p2.isInvincible();
-
-                            if (p1Lethal && p2Lethal) {
-                                if (!p1Invincible) this.killPlayer(p1);
-                                if (!p2Invincible) this.killPlayer(p2);
-                            } else if (p1Lethal && !p2Lethal) {
-                                if (!p2Invincible) this.killPlayer(p2, p1);
-                                else this.bouncePlayers(p1, p2);
-                            } else if (!p1Lethal && p2Lethal) {
-                                if (!p1Invincible) this.killPlayer(p1, p2);
-                                else this.bouncePlayers(p1, p2);
-                            } else {
-                                this.bouncePlayers(p1, p2);
-                                if (dist < 500) SFX.playBounce();
-                            }
-                        }
-                    }
-                }
-            }
-
-            bouncePlayers(p1, p2) {
-                const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-                const force = 1.5;
-                p1.vx -= Math.cos(angle) * force;
-                p1.vy -= Math.sin(angle) * force;
-                p2.vx += Math.cos(angle) * force;
-                p2.vy += Math.sin(angle) * force;
-            }
-
-            killPlayer(victim, killer = null) {
-                if (!victim.alive) return;
-                victim.alive = false;
-
-                SFX.playKill();
-                this.createExplosion(victim.x, victim.y, victim.color, victim.radius * 1.5);
-                this.shake = 10;
-
-                if (killer) {
-                    killer.grow(victim.radius * 1.5);
-                    killer.kills++;
-                    killer.flash = 10;
-                }
-
-                if (victim === this.player) {
-                    document.body.classList.add('shake');
-                    setTimeout(() => {
-                        const gameOverScreen = document.getElementById('game-over-screen');
-                        document.getElementById('final-score').innerText = Math.floor(this.player.score);
-                        document.getElementById('final-kills').innerText = this.player.kills;
-                        gameOverScreen.classList.remove('hidden');
-                    }, 800);
-                } else {
-                    setTimeout(() => {
-                        const newBot = new Player(`BOT ${Math.floor(Math.random() * 999)}`, true, this);
-                        this.players.push(newBot);
-                    }, 1500);
-                }
-            }
-
-            createExplosion(x, y, color, size) {
-                const count = Math.min(size * 3, 100);
-                for (let i = 0; i < count; i++) {
-                    this.particles.push(new Particle(x, y, color, size * 0.3));
-                }
-            }
-
-            updateUI(dt) {
-                if (!this.player) return;
-                document.getElementById('score-display').innerText = this.player.score;
-                // FPS real
-                const fps = Math.round(1000 / dt);
-                document.getElementById('fps-counter').innerText = fps;
-
-                const sorted = [...this.players].filter(p => p.alive).sort((a, b) => b.score - a.score).slice(0, 5);
-                const list = document.getElementById('leaderboard-list');
-                list.innerHTML = sorted.map((p, i) =>
-                    `<li class="flex justify-between items-center bg-slate-800/50 p-1 px-2 rounded ${p === this.player ? 'border border-yellow-500/50' : ''}">
-                <span class="${p === this.player ? 'text-yellow-300 font-bold' : 'text-gray-300'} text-xs">
-                    #${i + 1} ${p.name}
-                </span>
-                <span class="text-xs font-mono text-cyan-400">${Math.floor(p.score)}</span>
-            </li>`
-                ).join('');
-            }
-
-            drawGrid() {
-                this.ctx.fillStyle = '#0f172a';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.ctx.save();
-
-                let shakeX = 0, shakeY = 0;
-                if (this.shake > 0) {
-                    shakeX = (Math.random() - 0.5) * this.shake;
-                    shakeY = (Math.random() - 0.5) * this.shake;
-                    this.shake *= 0.9;
-                    if (this.shake < 0.5) this.shake = 0;
-                }
-
-                this.ctx.translate(-this.camera.x + shakeX, -this.camera.y + shakeY);
-
-                this.ctx.strokeStyle = '#334155';
-                this.ctx.lineWidth = 10;
-                this.ctx.strokeRect(0, 0, CONFIG.MAP_WIDTH, CONFIG.MAP_HEIGHT);
-
-                this.ctx.strokeStyle = '#1e293b';
-                this.ctx.lineWidth = 2;
-                const gridSize = 150;
-
-                const startX = Math.floor(this.camera.x / gridSize) * gridSize;
-                const startY = Math.floor(this.camera.y / gridSize) * gridSize;
-                const endX = startX + this.canvas.width + gridSize;
-                const endY = startY + this.canvas.height + gridSize;
-
-                this.ctx.beginPath();
-                for (let x = startX; x < endX; x += gridSize) {
-                    if (x < 0 || x > CONFIG.MAP_WIDTH) continue;
-                    this.ctx.moveTo(x, Math.max(0, startY));
-                    this.ctx.lineTo(x, Math.min(CONFIG.MAP_HEIGHT, endY));
-                }
-                for (let y = startY; y < endY; y += gridSize) {
-                    if (y < 0 || y > CONFIG.MAP_HEIGHT) continue;
-                    this.ctx.moveTo(Math.max(0, startX), y);
-                    this.ctx.lineTo(Math.min(CONFIG.MAP_WIDTH, endX), y);
-                }
-                this.ctx.stroke();
-
-                this.ctx.restore();
-            }
-
-            loop() {
-                if (!this.running) return;
-
-                const now = performance.now();
-                // Cálculo del deltaTime
-                let dt = now - this.lastTime;
-                this.lastTime = now;
-
-                // Cap en caso de que el tab esté inactivo o haya un lagazo enorme (max 0.1s)
-                if (dt > 100) dt = 100;
-
-                // TimeScale: 1.0 significa que corre a 60 FPS.
-                // Si dt es 16.6ms (60fps), timeScale es 1.
-                // Si dt es 8.3ms (120fps), timeScale es 0.5.
-                const timeScale = dt / (1000 / 60);
-
-                this.spawnPowerup(timeScale);
-
-                this.players.forEach(p => p.alive && p.update(timeScale));
-
-                this.particles.forEach((p, i) => {
-                    p.update(timeScale);
-                    if (p.life <= 0) this.particles.splice(i, 1);
-                });
-
-                this.checkCollisions();
-
-                if (this.player.alive) {
-                    const targetX = this.player.x - this.canvas.width / 2;
-                    const targetY = this.player.y - this.canvas.height / 2;
-                    // Lerp ajustado con timeScale
-                    const lerpFactor = 1 - Math.pow(0.92, timeScale); // aprox 0.08 a 60fps
-                    this.camera.x += (targetX - this.camera.x) * lerpFactor;
-                    this.camera.y += (targetY - this.camera.y) * lerpFactor;
-                }
-
-                this.drawGrid();
-
-                this.ctx.save();
-                let shakeX = (this.shake > 0) ? (Math.random() - 0.5) * this.shake : 0;
-                let shakeY = (this.shake > 0) ? (Math.random() - 0.5) * this.shake : 0;
-                this.ctx.translate(-this.camera.x + shakeX, -this.camera.y + shakeY);
-
-                this.orbs.forEach(orb => orb.draw(this.ctx, now));
-                this.powerups.forEach(pup => pup.draw(this.ctx, now));
-                this.particles.forEach(p => p.draw(this.ctx));
-                this.players.forEach(p => { if (p.alive) p.draw(this.ctx); });
-
-                this.ctx.restore();
-
-                this.updateUI(dt);
-                requestAnimationFrame(() => this.loop());
-            }
-        }
-
-        window.onload = () => new Game();
-
-    </script>
 </body>
 
 </html>
