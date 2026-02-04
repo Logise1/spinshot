@@ -1212,12 +1212,21 @@ class Game {
         // In LOGIN/LOBBY, we process bots.
         // In PLAYING, we process all.
 
-        this.players.forEach(p => {
-            // Skip dead players
-            if (!p.alive) return;
+        // Update & Draw Players (Bots + Remote)
+        // In LOGIN/LOBBY, we process bots.
+        // In PLAYING, we process all.
+
+        for (let i = this.players.length - 1; i >= 0; i--) {
+            const p = this.players[i];
+
+            // Remove dead entities
+            if (!p.alive) {
+                this.players.splice(i, 1);
+                continue;
+            }
 
             // Skip local player in LOGIN state
-            if (this.state === 'LOGIN' && p === this.player) return;
+            if (this.state === 'LOGIN' && p === this.player) continue;
 
             // In LOBBY, we might want to show the player BUT update/draw is tricky if they aren't in 'players' array yet or we want custom behavior.
             // The 'enterLobby' logic didn't add player to this.players.
@@ -1249,7 +1258,7 @@ class Game {
                 }
             }
             p.draw(this.ctx);
-        });
+        }
 
         // Lobby Specific: Draw Local Player manually
         if (this.state === 'LOBBY' && this.player) {
@@ -1453,14 +1462,8 @@ class Game {
 
             }, 800);
         } else if (!victim.isOnlineRemote) {
+            // Only respawn bots immediately
             if (victim.isBot) {
-                // Remove dead bot from array after a short visual delay or immediately?
-                // Better: Keep it 'alive=false' so it stops updating, but remove it from array eventually or just filter in loop.
-                // The issue is that the loop draws everything in this.players.
-                // Let's remove it from this.players so it disappears.
-                const idx = this.players.indexOf(victim);
-                if (idx > -1) this.players.splice(idx, 1);
-
                 setTimeout(() => {
                     const newBot = new Player(`BOT ${Math.floor(Math.random() * 999)}`, true, this);
                     this.players.push(newBot);
